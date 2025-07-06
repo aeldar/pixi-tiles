@@ -4,7 +4,7 @@ import { PixiContainer } from './pixi-container'
 function App() {
   return (
     <>
-      <div>Hello</div>
+      <div>Pixi Tiles</div>
       <PixiContainer />
     </>
   )
