@@ -34,6 +34,36 @@ function scaledToWidth(
   };
 }
 
+/**
+ * Adds an invisible bounds graphic to the container.
+ * This is useful for setting local bounds for the container
+ * without rendering anything visible.
+ * @param container The container to which the bounds will be added.
+ * @param width The width of the bounds.
+ * @param height The height of the bounds.
+ */
+export function addInvisibleBounds(
+  container: PIXI.Container,
+  width: number,
+  height: number
+): void {
+  const bounds = new PIXI.Graphics();
+  bounds.label = "invisible-bounds";
+  bounds.fill({ color: 0xff0000, alpha: 0.5 }); // transparent red
+  bounds.rect(0, 0, width, height);
+  bounds.fill();
+
+  container.addChild(bounds);
+}
+
+export function removeInvisibleBounds(container: PIXI.Container): void {
+  const bound = container.getChildByLabel("invisible-bounds");
+  if (bound) {
+    container.removeChild(bound);
+    bound.destroy();
+  }
+}
+
 export function scaleContainerToWidth(
   targetWidth: number,
   container: PIXI.Container
@@ -48,11 +78,11 @@ export function scaleContainerToWidth(
 }
 
 export function withDebugBorder(
-  sprite: PIXI.Sprite,
+  sprite: PIXI.Container,
   color = "red"
-): PIXI.Sprite {
+): PIXI.Container {
   const border = new PIXI.Graphics();
-  border.setStrokeStyle({ width: 5, color });
+  border.setStrokeStyle({ width: 1, color });
   border.rect(0, 0, sprite.width, sprite.height);
   border.stroke();
   sprite.addChild(border);
@@ -62,6 +92,5 @@ export function withDebugBorder(
 
 export function createTiledDocument(documentId: DocumentId): TiledDocument {
   const container = new TiledDocument(documentId);
-
   return container;
 }
