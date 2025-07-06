@@ -1,6 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Application } from "pixi.js";
 import { createPixiApp } from "./pixi/create-pixi-app";
+
+declare global {
+  var __PIXI_APP__: Application | undefined;
+}
 
 export function PixiContainer({
   width = 800,
@@ -8,25 +12,37 @@ export function PixiContainer({
   background = 0x1099bb,
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const appRef = useRef<Application | null>(null);
+  const [app, setApp] = useState<Application | null>(null);
 
   useEffect(() => {
     (async () => {
+      // skip if no container
       if (!containerRef.current) return;
-      const app = await createPixiApp(containerRef.current);
-      appRef.current = app;
-      containerRef.current.appendChild(app.canvas);
+      // TODO: destroy the app on unmounts
+      const pixiApp = await createPixiApp(containerRef.current);
+      setApp(pixiApp);
     })();
+  }, []);
+
+  useEffect(() => {
+    if (!app) return;
+    // add pixi app to dom
+    if (!containerRef.current) return;
+
+    containerRef.current.appendChild(app.canvas);
+
+    // Set the app to the global variable
+    globalThis.__PIXI_APP__ = app;
 
     return () => {
-      const app = appRef.current;
-      if (!app) return;
-      if (app.canvas.parentNode) {
-        app.canvas.parentNode.removeChild(app.canvas);
+      // Clean up the app when the component unmounts
+      if (app && app.canvas && containerRef.current) {
+        containerRef.current.removeChild(app.canvas);
       }
-      app.destroy(true, { children: true });
+      globalThis.__PIXI_APP__ = undefined;
     };
-  }, [width, height, background]);
+
+  }, [app]);
 
   return (
     <div
