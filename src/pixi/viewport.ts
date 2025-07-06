@@ -18,10 +18,10 @@ export function createViewport(app: PIXI.Application) {
   viewport.drag().pinch().wheel().decelerate();
 
   // Listen for the 'zoomed-end' event and log it
-  viewport.on('zoomed-end', (event: ZoomedEndEvent) => {
+  viewport.on('zoomed-end', () => {
     viewport.getChildrenByLabel('tiled-document').forEach((doc) => {
       if (isOnHandleZoomedEnd(doc)) {
-        doc.handleZoomedEnd(event);
+        doc.handleZoomedEnd();
       }
     });
   });
