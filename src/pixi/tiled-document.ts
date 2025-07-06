@@ -38,17 +38,21 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     const optimalLod = this.#getOptimalLodForWidth(globalWidth);
 
     if (this.#lod !== optimalLod) {
-    const newSizes = this.#getSizeForLod(optimalLod);
-    console.log("LOD changed, removing tiles and adding new ones");
-    console.log("New sizes for LOD", optimalLod, ":", newSizes);
-    this.#lod = optimalLod;
-    // const [width, height] = this.#removeTiles();
-    // this.#tilesContainer = this.#addTiles(this.#lod, width, height);
+      const newSizes = this.#getSizeForLod(optimalLod);
+      console.log("LOD changed, removing tiles and adding new ones");
+      console.log("New sizes for LOD", optimalLod, ":", newSizes);
+      this.#lod = optimalLod;
+      // const [width, height] = this.#removeTiles();
+      // this.#tilesContainer = this.#addTiles(this.#lod, width, height);
 
-    removeInvisibleBounds(this.#boundsContainer);
-    addInvisibleBounds(this.#boundsContainer, newSizes[0], newSizes[1]);
-    this.#boundsContainer.setSize(localWidth, localHeight);
-    // this.setSize(currentGlobalWidth, currentGlobalHeight);
+      removeInvisibleBounds(this.#boundsContainer);
+      addInvisibleBounds(this.#boundsContainer, newSizes[0], newSizes[1]);
+      // restore the bounds relative to the TiledDocument container
+      this.#boundsContainer.setSize(localWidth, localHeight);
+
+      this.#removeTiles();
+      this.#tilesContainer = this.#addTiles(this.#lod);
+      this.#tilesContainer.setSize(localWidth, localHeight);
     }
   }
 
@@ -61,7 +65,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     // we don't set global bounds during construction!
     addInvisibleBounds(this.#boundsContainer, width, height);
     this.addChild(this.#boundsContainer);
-    // this.#tilesContainer = this.#addTiles(initialLod, width, height);
+    this.#tilesContainer = this.#addTiles(initialLod);
   }
 
   // 100, 200, 300, 400
@@ -95,7 +99,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     return [width, height];
   }
 
-  #addTiles(lod: Lod, newWidth: number, newHeight: number): PIXI.Container {
+  #addTiles(lod: Lod): PIXI.Container {
     const c = new PIXI.Container();
     const [width, height] = this.#getSizeForLod(lod);
     c.label = "tiles-container";
@@ -139,8 +143,6 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     });
 
     this.addChild(c);
-    c.width = newWidth;
-    c.height = newHeight;
 
     return c;
   }
