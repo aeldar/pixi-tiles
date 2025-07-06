@@ -42,8 +42,6 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
       console.log("LOD changed, removing tiles and adding new ones");
       console.log("New sizes for LOD", optimalLod, ":", newSizes);
       this.#lod = optimalLod;
-      // const [width, height] = this.#removeTiles();
-      // this.#tilesContainer = this.#addTiles(this.#lod, width, height);
 
       removeInvisibleBounds(this.#boundsContainer);
       addInvisibleBounds(this.#boundsContainer, newSizes[0], newSizes[1]);
@@ -106,13 +104,13 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     // Store the original size before adding tiles
 
     // Create tiles and add them to the container
-    const urls = tileImgUrlsForDocumentAndLod(this.#documentId, lod);
+    const urlMatrix = tileImgUrlsForDocumentAndLod(this.#documentId, lod);
 
-    urls.forEach((row, m) => {
-      row.forEach((url, n) => {
+    urlMatrix.forEach((row, rowIndex) => {
+      row.forEach((url, columnIndex) => {
         // calculate last row and column corrections for the sprite size.
-        const isLastRow = m === urls.length - 1;
-        const isLastCol = n === row.length - 1;
+        const isLastRow = rowIndex === urlMatrix.length - 1;
+        const isLastCol = columnIndex === row.length - 1;
         const spriteWidth = isLastCol
           ? width % TILE_SIZE_PX || TILE_SIZE_PX
           : TILE_SIZE_PX;
@@ -123,7 +121,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
         const sprite = createEmptySprite(spriteWidth, spriteHeight);
 
         sprite.setSize(spriteWidth, spriteHeight);
-        sprite.position.set(n * TILE_SIZE_PX, m * TILE_SIZE_PX);
+        sprite.position.set(columnIndex * TILE_SIZE_PX, rowIndex * TILE_SIZE_PX);
 
         c.addChild(sprite);
 

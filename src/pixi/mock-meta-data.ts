@@ -36,8 +36,8 @@ export function documentSizes(documentId: DocumentId): Size[] {
 
 // Tiles, m and n, zero based
 function tileDimensionsForSizeAndLod(x: number, y: number, lod: Lod): [number, number] {
-  const m = Math.floor(x / TILE_SIZE_PX);
-  const n = Math.floor(y / TILE_SIZE_PX);
+  const m = Math.floor(y / TILE_SIZE_PX);
+  const n = Math.floor(x / TILE_SIZE_PX);
   return [m, n];
 }
 

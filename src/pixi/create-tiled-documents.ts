@@ -49,7 +49,7 @@ export function addInvisibleBounds(
 ): void {
   const bounds = new PIXI.Graphics();
   bounds.label = "invisible-bounds";
-  bounds.fill({ color: 0xff0000, alpha: 0.5 }); // transparent red
+  bounds.fill({ color: 0xff0000, alpha: 0.1 }); // transparent red
   bounds.rect(0, 0, width, height);
   bounds.fill();
 
