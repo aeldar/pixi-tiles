@@ -50,18 +50,13 @@ function imgUrlForTile(documentId: DocumentId, m: number, n: number, lod: Lod): 
   return `${IMG_URL_PREFIX}/${documentId}/${lod}/tile_${m}_${n}.png`;
 }
 
+// Generate the matrix of image URLs, urls[row][column]
 // m - row, n - column
-function _tileImgUrlsForDocumentAndLod(documentId: DocumentId, lod: Lod): string[][] {
+export function tileImgUrlsForDocumentAndLod(documentId: DocumentId, lod: Lod): string[][] {
   const [m, n] = tileDimensionsForDocumentAndLod(documentId, lod);
   return Array.from({ length: m + 1 }, (_, i) =>
     Array.from({ length: n + 1 }, (_, j) => imgUrlForTile(documentId, i, j, lod)),
   );
-}
-
-// The matrix of image URLs, urls[row][column]
-export function tileImgUrlsForDocumentAndLod(...args: Parameters<typeof _tileImgUrlsForDocumentAndLod>): string[][] {
-  const urls = _tileImgUrlsForDocumentAndLod(...args);
-  return urls;
 }
 
 /**

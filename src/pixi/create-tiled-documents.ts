@@ -1,6 +1,9 @@
 import * as PIXI from "pixi.js";
-import { type DocumentId, type Lod } from "./mock-meta-data";
+import { delay, type DocumentId, type Lod } from "./mock-meta-data";
 import { TiledDocument } from "./tiled-document";
+import { TILE_SIZE_PX } from "./constants";
+
+export type Size = [w: number, h: number];
 
 export function createBackground(width: number, height: number): PIXI.Graphics {
   const background = new PIXI.Graphics();
@@ -27,13 +30,13 @@ export function createEmptySprite(width: number, height: number): PIXI.Sprite {
  * @param width The width of the bounds.
  * @param height The height of the bounds.
  */
-export function addInvisibleBounds(
+export function createInvisibleBounds(
   width: number,
   height: number
 ): PIXI.Graphics {
   const bounds = new PIXI.Graphics();
   bounds.label = "invisible-bounds";
-  bounds.fill({ color: 0xff0000, alpha: 0.1 }); // transparent red
+  bounds.fill({ color: 0xffffff, alpha: 0.5 }); // semi-transparent white
   bounds.rect(0, 0, width, height);
   bounds.fill();
 
@@ -48,20 +51,61 @@ export function removeInvisibleBounds(container: PIXI.Container): void {
   }
 }
 
-export function withDebugBorder(
-  sprite: PIXI.Container,
-  color = "red"
-): PIXI.Container {
-  const border = new PIXI.Graphics();
-  border.setStrokeStyle({ width: 1, color });
-  border.rect(0, 0, sprite.width, sprite.height);
-  border.stroke();
-  sprite.addChild(border);
-
-  return sprite;
-}
-
 export function createTiledDocument(documentId: DocumentId): TiledDocument {
   const container = new TiledDocument(documentId);
   return container;
 }
+
+export const getOptimalLodForWidth =
+  (sizesPerLod: readonly Size[]) =>
+  (width: number): Lod => {
+    // width = width * 3; // TODO: remove after debugging.
+    // Determine the optimal LOD based on the width of the document
+    for (let lod = 0; lod < sizesPerLod.length; lod++) {
+      if (sizesPerLod[lod][0] >= width) {
+        return lod as Lod;
+      }
+    }
+    return (sizesPerLod.length - 1) as Lod; // Return the highest LOD if no match found
+  };
+
+  export function createTilesContainer(urlMatrix: string[][], size: Size): PIXI.Container {
+    const container = new PIXI.Container();
+    const [width, height] = size;
+    container.label = "tiles-container";
+
+    urlMatrix.forEach((row, rowIndex) => {
+      row.forEach((url, columnIndex) => {
+        // calculate last row and column corrections for the sprite size.
+        const isLastRow = rowIndex === urlMatrix.length - 1;
+        const isLastCol = columnIndex === row.length - 1;
+        const spriteWidth = isLastCol
+          ? width % TILE_SIZE_PX || TILE_SIZE_PX
+          : TILE_SIZE_PX;
+        const spriteHeight = isLastRow
+          ? height % TILE_SIZE_PX || TILE_SIZE_PX
+          : TILE_SIZE_PX;
+
+        const sprite = createEmptySprite(spriteWidth, spriteHeight);
+
+        sprite.setSize(spriteWidth, spriteHeight);
+        sprite.position.set(
+          columnIndex * TILE_SIZE_PX,
+          rowIndex * TILE_SIZE_PX
+        );
+
+        container.addChild(sprite);
+
+        PIXI.Assets.load(url)
+          // simulate network delay
+          .then(delay(Math.random() * 1000))
+          .then((texture) => {
+            sprite.texture = texture;
+            sprite.label = "tile";
+            sprite.setSize(spriteWidth, spriteHeight);
+          });
+      });
+    });
+
+    return container;
+  }
