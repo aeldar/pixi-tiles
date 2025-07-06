@@ -5,12 +5,9 @@
 # converts them to PNG format if necessary, and then generates image tiles.
 # Then it processes all PNG files,
 # scales them down to different zoom levels, and saves the resulting chunks
-# The resources and generated PNG files are stored in the `_generated-assets/full-size` directory,
-# while the resulting image tiles (chunks) are saved in the `_generated-assets/chunks` directory.
+# The resources and generated PNG files are stored in the `public/assets/_generated-assets/full-size` directory,
+# while the resulting image tiles (chunks) are saved in the `public/assets/_generated-assets/chunks` directory.
 # Both directories are in .gitignore, to not track the generated files in git.
-#
-# The script can also move the generated assets to the public directory of the Aize app.
-# The public directory is located at `apps/aize/public/assets/_2d_generated-assets`.
 #
 # PREREQUISITES:
 #   - curl (to download resources)
@@ -18,9 +15,7 @@
 #   - ghostscript (to convert PDF to PNG)
 # USAGE:
 #    To generate assets locally, run in a terminal:
-#.     `./libs/tm-2d/tiled-document/mocks/scripts/prepare-mock-resources.sh`
-#.   To generate assets and move them to the public directory, run:
-#      `./libs/tm-2d/tiled-document/mocks/scripts/prepare-mock-resources.sh --move-to-public`
+#.     `./prepare-mock-resources.sh`
 
 set -eu
 
@@ -31,19 +26,11 @@ EXT="png"
 TILE_SIZE="1024"
 MAX_ZOOM=5
 
-# Check if the script is run with the --move-to-public flag
-IS_MOVE_TO_PUBLIC=false
-if [ "${1:-}" = "--move-to-public" ]; then
-  IS_MOVE_TO_PUBLIC=true
-fi
-
 # Define source and output directories relative to the script
-GENERATED_ASSETS_DIR="$SCRIPT_DIR/../_generated-assets"
+GENERATED_ASSETS_DIR="$SCRIPT_DIR/../public/assets/_generated"
 SRC_DIR="$GENERATED_ASSETS_DIR/full-size"
 OUT_DIR="$GENERATED_ASSETS_DIR/chunks"
 LINKS_FILE="$SCRIPT_DIR/resource-links.txt"
-AIZE_APP_PUBLIC_DIR="$SCRIPT_DIR/../../../../../apps/aize/public/assets"
-PUBLIC_SUBDIR="${AIZE_APP_PUBLIC_DIR}/_2d_generated-assets"
 
 # Clean up the output directory before processing
 rm -rf "${OUT_DIR:?}"/*
@@ -183,23 +170,6 @@ scale_image_for_zoom() {
   magick "$source_image" -resize "$scale_factor"% "$output_image"
 }
 
-move_generated_assets_to_public_directory() {
-  echo "Moving assets to public directory..."
-
-  if [ ! -d "$AIZE_APP_PUBLIC_DIR" ]; then
-    echo "Error: Aize app public directory not found: $AIZE_APP_PUBLIC_DIR"
-    echo "  The files will not be moved to the public directory."
-    exit 0
-  fi
-
-  [ -d "$PUBLIC_SUBDIR" ] && echo "  Removing existing ${PUBLIC_SUBDIR}..." && rm -rf "$PUBLIC_SUBDIR"
-
-  echo "  Move generated assets to $PUBLIC_SUBDIR"
-  mv "$GENERATED_ASSETS_DIR" "$PUBLIC_SUBDIR"
-
-  echo "Assets moved to $PUBLIC_SUBDIR"
-}
-
 ### RUN ###
 
 check_tooling_availability
@@ -231,11 +201,5 @@ for source_img in "$SRC_DIR"/*."$EXT"; do
 done
 
 echo "Chunks prepared in $OUT_DIR"
-
-if [ "$IS_MOVE_TO_PUBLIC" = true ]; then
-  move_generated_assets_to_public_directory
-else
-  echo "Assets are not moved to public directory. Use --move-to-public flag to move them."
-fi
 
 exit 0
