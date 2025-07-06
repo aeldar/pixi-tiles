@@ -8,8 +8,7 @@ const INITIAL_GRID_OFFSET_X = 30; // px
 const INITIAL_GRID_OFFSET_Y = 100; // px
 
 function addDocument(viewport: PIXI.Container, documentId: DocumentId, posX: number, posY: number): void {
-  const lod = 0; // For now, we use the lowest LOD
-  const tiledDocument = createTiledDocument(documentId, lod);
+  const tiledDocument = createTiledDocument(documentId);
   scaleContainerToWidth(INITIAL_WORLD_DOCUMENT_WIDTH, tiledDocument);
   tiledDocument.position.set(posX, posY);
   viewport.addChild(tiledDocument);

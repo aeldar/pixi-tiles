@@ -18,15 +18,10 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   debug = false;
 
   handleZoomedEnd(): void {
-    // Handle zoomed end event
-    if (this.debug) {
-      this.#debugParams();
-    }
 
     const currentWidth = this.getBounds(true).width;
     const optimalLod = this.#getOptimalLodForWidth(currentWidth);
-    console.log("Current width", currentWidth);
-    console.log("Optimal LOD for current width:", optimalLod);
+
     if (this.#lod !== optimalLod) {
       console.log("LOD changed, removing tiles and adding new ones");
       this.#lod = optimalLod;
@@ -46,20 +41,10 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     this.#tilesContainer = this.#addTiles(initialLod, width, height);
   }
 
-  #debugParams() {
-    console.log("Current Container World Bounds:", this.getBounds(true));
-    console.log(
-      "Bounds size in pixels",
-      this.getBounds(true).width,
-      this.getBounds().height
-    );
-  }
-
   // 100, 200, 300, 400
   #getOptimalLodForWidth(width: number): Lod {
     // Determine the optimal LOD based on the width of the document
     const sizes = documentSizes(this.#documentId);
-    console.log("Available sizes for document:", sizes);
     for (let lod = 0; lod < sizes.length; lod++) {
       if (sizes[lod][0] >= width) {
         return lod as Lod;
@@ -95,21 +80,11 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   #addTiles(lod: Lod, newWidth: number, newHeight: number): PIXI.Container {
     const c = new PIXI.Container();
     const [width, height] = this.#getSizeForLod(lod);
-    console.log("Adding tiles for LOD:", lod, "with size:", width, height);
     c.label = "tiles-container";
     // Store the original size before adding tiles
-    const originalWidth = this.width;
-    const originalHeight = this.height;
-    console.log(
-      "Original size before adding tiles:",
-      originalWidth,
-      originalHeight
-    );
-    console.log("Sizes comming from the caller", newWidth, newHeight);
 
     // Create tiles and add them to the container
     const urls = tileImgUrlsForDocumentAndLod(this.#documentId, lod);
-    console.log("Tile URLs for document:", this.#documentId, "LOD:", lod, urls);
 
     urls.forEach((row, m) => {
       row.forEach((url, n) => {
@@ -140,8 +115,6 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
           .then((texture) => {
             sprite.texture = texture;
             sprite.label = "tile";
-            console.log("After texture loading", sprite.width, sprite.height);
-            console.log("will be set to", spriteWidth, spriteHeight);
             sprite.setSize(spriteWidth, spriteHeight);
           });
       });
