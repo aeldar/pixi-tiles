@@ -9,6 +9,9 @@
 # while the resulting image tiles (chunks) are saved in the `public/assets/_generated-assets/chunks` directory.
 # Both directories are in .gitignore, to not track the generated files in git.
 #
+# The file name for tiles has the following format:
+#   `<orig_file_name>/<level_of_details>/tile_<y>_<x>.png`, where `<y>` and `<x>` are the row and column indices of the tile.
+#
 # PREREQUISITES:
 #   - curl (to download resources)
 #   - imagemagick (to process images)
@@ -150,7 +153,7 @@ prepare_chunks_for_zoom() {
   magick \
     "$source_image" \
     -crop "${TILE_SIZE}x${TILE_SIZE}" \
-    -set filename:tile "%[fx:page.x/${TILE_SIZE}]_%[fx:page.y/${TILE_SIZE}]" \
+    -set filename:tile "%[fx:page.y/${TILE_SIZE}]_%[fx:page.x/${TILE_SIZE}]" \
     +repage \
     +adjoin \
     "$subdir/tile_%[filename:tile].png"
