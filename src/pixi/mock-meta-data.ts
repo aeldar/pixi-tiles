@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { TILE_SIZE_PX } from './constants';
 
-const IMG_URL_PREFIX = '/assets/_2d_generated-assets/chunks';
+const IMG_URL_PREFIX = '/assets/_generated/chunks';
 
 type SizeMetaData = `${number}x${number}`;
 type Size = [width: number, height: number];
