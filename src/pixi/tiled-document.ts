@@ -49,6 +49,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
 
   constructor(documentId: DocumentId, initialLod: Lod = 0) {
     super();
+  
     this.#documentId = documentId;
     this.#sizes = documentSizes(this.#documentId);
 

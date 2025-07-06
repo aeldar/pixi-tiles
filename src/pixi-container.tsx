@@ -31,7 +31,7 @@ export function PixiContainer({
 
     containerRef.current.appendChild(app.canvas);
 
-    // Set the app to the global variable
+    // Set the app to the global variable for Pixi Dev Tools.
     globalThis.__PIXI_APP__ = app;
 
     return () => {
