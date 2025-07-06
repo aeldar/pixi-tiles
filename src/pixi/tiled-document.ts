@@ -28,22 +28,26 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   #lod: Lod = 0;
 
   #tilesContainer: PIXI.Container | null = null;
-  #boundsContainer: PIXI.Container = new PIXI.Container();
 
   debug = false;
 
   handleZoomedEnd(): void {
+    // Real world width of this Container.
     const globalWidth = this.getBounds().width;
 
-    const optimalLod = getOptimalLodForWidth(this.#sizesPerLod)(globalWidth);
+    // Get the optimal LOD for the current width.
+    const optimalLod = this.#getOptimalLodForWidth(globalWidth);
 
-    // LOD changed, removing tiles and adding new ones
     if (this.#lod !== optimalLod) {
-      this.#lod = optimalLod;
-
+      // Remove tiles and add new ones
       this.#removeTiles();
-      this.#tilesContainer = this.#addTiles(this.#lod);
+      this.#tilesContainer = this.#addTiles(optimalLod);
+      this.addChild(this.#tilesContainer);
+      // Restore the internal size of tiled container to prevent resizing issues.
       this.#tilesContainer.setSize(this.#localWidth, this.#localHeight);
+
+      // LOD has been changed
+      this.#lod = optimalLod;
     }
   }
 
@@ -60,10 +64,20 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     this.#localWidth = width;
     this.#localHeight = height;
 
-    // we don't set global bounds during construction!
+    // Add transparent bounds.
+    // Can be replaced with a background, invisible bounds, or removed completely.
     const bounds = addInvisibleBounds(this.#localWidth, this.#localHeight);
     this.addChild(bounds);
+
+    // Add tiled container.
     this.#tilesContainer = this.#addTiles(initialLod);
+    this.addChild(this.#tilesContainer);
+  }
+
+  #getOptimalLodForWidth(width: number): Lod {
+    // width = width * 3; // TODO: remove after debugging.
+    // Determine the optimal LOD based on the width of the document
+    return getOptimalLodForWidth(this.#sizesPerLod)(width);
   }
 
   #getSizeForLod(lod: Lod): Size {
@@ -124,8 +138,6 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
           });
       });
     });
-
-    this.addChild(c);
 
     return c;
   }
