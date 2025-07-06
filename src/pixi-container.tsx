@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Application } from "pixi.js";
+import type { Application } from "pixi.js";
 import { createPixiApp } from "./pixi-app/create-pixi-app";
 
 declare global {
@@ -42,7 +42,6 @@ export function PixiContainer({
       }
       globalThis.__PIXI_APP__ = undefined;
     };
-
   }, [app]);
 
   return (

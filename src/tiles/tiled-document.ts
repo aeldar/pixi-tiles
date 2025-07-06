@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Container } from "pixi.js";
 import {
   createInvisibleBounds,
   createTilesContainer,
@@ -13,7 +13,7 @@ import {
   type Lod,
 } from "./mock-meta-data";
 
-class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
+class TiledDocument extends Container implements OnHandleZoomedEnd {
   readonly label = "tiled-document";
   readonly #documentId: DocumentId;
   // sizes for each LOD
@@ -26,7 +26,7 @@ class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
 
   #lod: Lod = 0;
 
-  #tilesContainer: PIXI.Container | null = null;
+  #tilesContainer: Container | null = null;
 
   debug = false;
 
@@ -91,13 +91,13 @@ class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     return this.#sizes[lod];
   }
 
-  #destroyTilesContainer(container: PIXI.Container | null): void {
+  #destroyTilesContainer(container: Container | null): void {
     if (!container) return;
     // TODO: investigate runtime error while zooming out.
     container.destroy({ children: true });
   }
 
-  #createTilesContainer(lod: Lod): PIXI.Container {
+  #createTilesContainer(lod: Lod): Container {
     const [width, height] = this.#getSizeForLod(lod);
 
     const urlMatrix = tileImgUrlsForDocumentAndLod(this.#documentId, lod);

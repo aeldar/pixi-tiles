@@ -1,8 +1,8 @@
+import type { Application } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import * as PIXI from 'pixi.js';
 import { isOnHandleZoomedEnd } from '../tiles/on-handle-zoom-end';
 
-export function createViewport(app: PIXI.Application) {
+export function createViewport(app: Application) {
   const viewport = new Viewport({
     screenWidth: app.screen.width,
     screenHeight: app.screen.height,

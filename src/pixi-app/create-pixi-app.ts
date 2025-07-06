@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+import { Application, type Container } from "pixi.js";
 import { DOCUMENT_IDS, type DocumentId } from "../tiles/mock-meta-data";
 import { createViewport } from "./viewport";
 import { createTiledDocument } from "../tiles/tiled-document";
@@ -16,9 +16,9 @@ function scaledSizeToWidth(targetWidth: number, size: Size): Size {
 }
 
 /**
- * Scales a PIXI.Container to a new width while maintaining the aspect ratio.
+ * Scales a Container to a new width while maintaining the aspect ratio.
  */
-function scaleContainerToWidth(c: PIXI.Container, targetWidth: number): void {
+function scaleContainerToWidth(c: Container, targetWidth: number): void {
   const [_, targetHeight] = scaledSizeToWidth(targetWidth, [c.width, c.height]);
   c.width = targetWidth;
   c.height = targetHeight;
@@ -28,7 +28,7 @@ function scaleContainerToWidth(c: PIXI.Container, targetWidth: number): void {
  * Adds a document to the viewport at the specified position.
  */
 function addDocumentToContainer(
-  viewport: PIXI.Container,
+  viewport: Container,
   documentId: DocumentId,
   posX: number,
   posY: number
@@ -40,7 +40,7 @@ function addDocumentToContainer(
 }
 
 export async function createPixiApp(container: HTMLDivElement) {
-  const app = new PIXI.Application();
+  const app = new Application();
   await app.init({
     resizeTo: container,
     backgroundColor: "lightblue",

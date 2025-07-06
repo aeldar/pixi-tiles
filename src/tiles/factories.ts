@@ -1,11 +1,11 @@
-import * as PIXI from "pixi.js";
+import { Sprite, Texture, Graphics, Container, Assets } from "pixi.js";
 import { TILE_SIZE } from "./constants";
 import { delay, type Lod } from "./mock-meta-data";
 
 export type Size = [width: number, height: number];
 
-function createEmptySprite(width: number, height: number): PIXI.Sprite {
-  const sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
+function createEmptySprite(width: number, height: number): Sprite {
+  const sprite = new Sprite(Texture.EMPTY);
   sprite.label = "empty-tile";
   sprite.setSize(width, height);
 
@@ -23,8 +23,8 @@ function createEmptySprite(width: number, height: number): PIXI.Sprite {
 export function createInvisibleBounds(
   width: number,
   height: number
-): PIXI.Graphics {
-  const bounds = new PIXI.Graphics();
+): Graphics {
+  const bounds = new Graphics();
   bounds.label = "invisible-bounds";
   bounds.fill({ color: 0xffffff, alpha: 0.5 }); // semi-transparent white
   bounds.rect(0, 0, width, height);
@@ -49,10 +49,10 @@ export const optimalLodForWidthFn =
 export function createTilesContainer(
   urlMatrix: string[][],
   size: Size
-): PIXI.Container {
+): Container {
   const [containerWidth, containerHeight] = size;
 
-  const container = new PIXI.Container();
+  const container = new Container();
   container.label = "tiles-container";
 
   const lastRowHeight = containerHeight % TILE_SIZE;
@@ -75,7 +75,7 @@ export function createTilesContainer(
 
       // Async code here!
       // TODO: improve!
-      PIXI.Assets.load(url)
+      Assets.load(url)
         // simulate network delay
         .then(delay(Math.random() * 1000))
         .then((texture) => {
