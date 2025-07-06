@@ -4,7 +4,11 @@ An example Pixi.js application that uses tiles to render a large world document.
 
 ## Prepare dev env
 
-Run the following command to install dependencies:
+Example image generation script depends on `curl`, `magick` (ImageMagick) and `gs` (Ghostscript). The development runtime environment uses `bun`.
+
+Either make sure they are installed on your system, or use the provided `nix` shell to run the script in a containerized environment.
+
+Use `nix` to install dependencies:
 
 ```sh
 nix develop
