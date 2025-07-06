@@ -15,7 +15,6 @@ import {
 } from "./mock-meta-data";
 import { getOptimalLodForWidth, type Size } from "./tile-utils";
 
-
 export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   readonly label = "tiled-document";
   readonly #documentId: DocumentId;
@@ -62,12 +61,8 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
     this.#localHeight = height;
 
     // we don't set global bounds during construction!
-    addInvisibleBounds(
-      this.#boundsContainer,
-      this.#localWidth,
-      this.#localHeight
-    );
-    this.addChild(this.#boundsContainer);
+    const bounds = addInvisibleBounds(this.#localWidth, this.#localHeight);
+    this.addChild(bounds);
     this.#tilesContainer = this.#addTiles(initialLod);
   }
 

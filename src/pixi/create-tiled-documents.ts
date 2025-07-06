@@ -28,17 +28,16 @@ export function createEmptySprite(width: number, height: number): PIXI.Sprite {
  * @param height The height of the bounds.
  */
 export function addInvisibleBounds(
-  container: PIXI.Container,
   width: number,
   height: number
-): void {
+): PIXI.Graphics {
   const bounds = new PIXI.Graphics();
   bounds.label = "invisible-bounds";
   bounds.fill({ color: 0xff0000, alpha: 0.1 }); // transparent red
   bounds.rect(0, 0, width, height);
   bounds.fill();
 
-  container.addChild(bounds);
+  return bounds;
 }
 
 export function removeInvisibleBounds(container: PIXI.Container): void {
