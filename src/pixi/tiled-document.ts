@@ -13,19 +13,22 @@ import {
   type DocumentId,
   type Lod,
 } from "./mock-meta-data";
+import { getOptimalLodForWidth, type Size } from "./tile-utils";
+
 
 export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   readonly label = "tiled-document";
   readonly #documentId: DocumentId;
+  readonly #sizesPerLod: readonly Size[];
 
   // We have to maintain the bounds whenever the internal LOD changes.
   // These are set during the initialisation only.
-  readonly localWidth: number;
-  readonly localHeight: number;
+  readonly #localWidth: number;
+  readonly #localHeight: number;
 
   #lod: Lod = 0;
-  #tilesContainer: PIXI.Container | null = null;
 
+  #tilesContainer: PIXI.Container | null = null;
   #boundsContainer: PIXI.Container = new PIXI.Container();
 
   debug = false;
@@ -33,75 +36,56 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   handleZoomedEnd(): void {
     const globalWidth = this.getBounds().width;
 
-    const optimalLod = this.#getOptimalLodForWidth(globalWidth);
+    const optimalLod = getOptimalLodForWidth(this.#sizesPerLod)(globalWidth);
 
+    // LOD changed, removing tiles and adding new ones
     if (this.#lod !== optimalLod) {
-      const newSize = this.#getSizeForLod(optimalLod);
-      console.log("LOD changed, removing tiles and adding new ones");
-      console.log("New sizes for LOD", optimalLod, ":", newSize);
       this.#lod = optimalLod;
-
-      removeInvisibleBounds(this.#boundsContainer);
-      addInvisibleBounds(this.#boundsContainer, newSize[0], newSize[1]);
-      // restore the bounds relative to the TiledDocument container
-      this.#boundsContainer.setSize(this.localWidth, this.localHeight);
 
       this.#removeTiles();
       this.#tilesContainer = this.#addTiles(this.#lod);
-      this.#tilesContainer.setSize(this.localWidth, this.localHeight);
+      this.#tilesContainer.setSize(this.#localWidth, this.#localHeight);
     }
   }
 
   constructor(documentId: DocumentId, initialLod: Lod = 0) {
     super();
-    this.#lod = initialLod;
     this.#documentId = documentId;
+    this.#sizesPerLod = documentSizes(this.#documentId);
+
+    // TODO: check the best LOD on initialisation
+    this.#lod = initialLod;
     const [width, height] = this.#getSizeForLod(initialLod);
     // Save original width and height.
     // It doesn't matter which LOD to use, what matters is aspect ratio and persistence of the size.
-    this.localWidth = width;
-    this.localHeight = height;
+    this.#localWidth = width;
+    this.#localHeight = height;
 
     // we don't set global bounds during construction!
     addInvisibleBounds(
       this.#boundsContainer,
-      this.localWidth,
-      this.localHeight
+      this.#localWidth,
+      this.#localHeight
     );
     this.addChild(this.#boundsContainer);
     this.#tilesContainer = this.#addTiles(initialLod);
   }
 
-  // 100, 200, 300, 400
-  #getOptimalLodForWidth(width: number): Lod {
-    // width = width * 3; // TODO: remove after debugging.
-    // Determine the optimal LOD based on the width of the document
-    const sizes = documentSizes(this.#documentId);
-    for (let lod = 0; lod < sizes.length; lod++) {
-      if (sizes[lod][0] >= width) {
-        return lod as Lod;
-      }
-    }
-    return (sizes.length - 1) as Lod; // Return the highest LOD if no match found
+  #getSizeForLod(lod: Lod): Size {
+    return this.#sizesPerLod[lod];
   }
 
-  #getSizeForLod(lod: Lod): [number, number] {
-    return documentSizes(this.#documentId)[lod];
-  }
-
-  #removeTiles(): [number, number] {
+  #removeTiles() {
     if (!this.#tilesContainer) {
       console.warn("No tiles container to remove");
-      return [0, 0];
+      return;
     }
-    const width = this.#tilesContainer.getBounds(true).width;
-    const height = this.#tilesContainer.getBounds(true).height;
     // Remove all tiles from the container
     if (this.#tilesContainer) {
       this.removeChild(this.#tilesContainer);
     }
 
-    return [width, height];
+    return;
   }
 
   #addTiles(lod: Lod): PIXI.Container {
