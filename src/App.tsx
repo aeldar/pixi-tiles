@@ -1,11 +1,11 @@
 import './App.css'
-import { PixiApp } from './pixi-app'
+import { PixiContainer } from './pixi-container'
 
 function App() {
   return (
     <>
       <div>Hello</div>
-      <PixiApp />
+      <PixiContainer />
     </>
   )
 }

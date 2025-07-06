@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Application } from "pixi.js";
 
-export function PixiApp({ width = 800, height = 600, background = 0x1099bb }) {
+export function PixiContainer({ width = 800, height = 600, background = 0x1099bb }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const appRef = useRef<Application | null>(null);
 
