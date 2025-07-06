@@ -1,5 +1,7 @@
 # Pixi Tiles
 
+An example Pixi.js application that uses tiles to render a large world document. The application is built with TypeScript and uses `bun` as the package manager.
+
 ## Prepare dev env
 
 Run the following command to install dependencies:
