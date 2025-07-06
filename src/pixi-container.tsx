@@ -38,6 +38,7 @@ export function PixiContainer({
       // Clean up the app when the component unmounts
       if (app && app.canvas && containerRef.current) {
         containerRef.current.removeChild(app.canvas);
+        app.destroy(true, { children: true });
       }
       globalThis.__PIXI_APP__ = undefined;
     };

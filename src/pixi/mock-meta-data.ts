@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { TILE_SIZE_PX } from './constants';
 
 const IMG_URL_PREFIX = '/assets/_generated/chunks';
@@ -63,5 +62,5 @@ function _tileImgUrlsForDocumentAndLod(documentId: DocumentId, lod: Lod): string
 // TODO: remove transposing when the chunk generator is fixed.
 export function tileImgUrlsForDocumentAndLod(...args: Parameters<typeof _tileImgUrlsForDocumentAndLod>): string[][] {
   const urls = _tileImgUrlsForDocumentAndLod(...args);
-  return R.transpose(urls);
+  return urls;
 }
