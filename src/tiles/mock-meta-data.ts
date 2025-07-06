@@ -35,7 +35,7 @@ export function documentSizes(documentId: DocumentId): Size[] {
 }
 
 // Tiles, m and n, zero based
-function tileDimensionsForSizeAndLod(x: number, y: number, lod: Lod): [number, number] {
+function tileDimensionsForSizeAndLod(x: number, y: number): [number, number] {
   const m = Math.floor(y / TILE_SIZE);
   const n = Math.floor(x / TILE_SIZE);
   return [m, n];
@@ -43,7 +43,7 @@ function tileDimensionsForSizeAndLod(x: number, y: number, lod: Lod): [number, n
 
 function tileDimensionsForDocumentAndLod(documentId: DocumentId, lod: Lod): [number, number] {
   const [width, height] = documentSizes(documentId)[lod];
-  return tileDimensionsForSizeAndLod(width, height, lod);
+  return tileDimensionsForSizeAndLod(width, height);
 }
 
 function imgUrlForTile(documentId: DocumentId, m: number, n: number, lod: Lod): string {
