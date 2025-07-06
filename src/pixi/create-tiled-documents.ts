@@ -12,26 +12,11 @@ export function createBackground(width: number, height: number): PIXI.Graphics {
 }
 
 export function createEmptySprite(width: number, height: number): PIXI.Sprite {
-  const texture = PIXI.Texture.EMPTY;
-  const sprite = new PIXI.Sprite(texture);
+  const sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
   sprite.label = "empty-tile";
-  sprite.anchor.set(0);
-  sprite.width = width;
-  sprite.height = height;
+  sprite.setSize(width, height);
 
   return sprite;
-}
-
-function scaledToWidth(
-  targetWidth: number,
-  origWidth: number,
-  origHeight: number
-): { width: number; height: number } {
-  const scale = targetWidth / origWidth;
-  return {
-    width: targetWidth,
-    height: origHeight * scale,
-  };
 }
 
 /**
@@ -62,19 +47,6 @@ export function removeInvisibleBounds(container: PIXI.Container): void {
     container.removeChild(bound);
     bound.destroy();
   }
-}
-
-export function scaleContainerToWidth(
-  targetWidth: number,
-  container: PIXI.Container
-): void {
-  const { width, height } = scaledToWidth(
-    targetWidth,
-    container.width,
-    container.height
-  );
-  container.width = width;
-  container.height = height;
 }
 
 export function withDebugBorder(

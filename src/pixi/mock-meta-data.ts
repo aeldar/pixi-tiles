@@ -1,4 +1,4 @@
-import { TILE_SIZE_PX } from './constants';
+import { DEBUG_EMULATE_RANDOM_LATENCY, TILE_SIZE_PX } from './constants';
 
 const IMG_URL_PREFIX = '/assets/_generated/chunks';
 
@@ -58,9 +58,15 @@ function _tileImgUrlsForDocumentAndLod(documentId: DocumentId, lod: Lod): string
   );
 }
 
-// m - column, n - row
-// TODO: remove transposing when the chunk generator is fixed.
+// The matrix of image URLs, urls[row][column]
 export function tileImgUrlsForDocumentAndLod(...args: Parameters<typeof _tileImgUrlsForDocumentAndLod>): string[][] {
   const urls = _tileImgUrlsForDocumentAndLod(...args);
   return urls;
+}
+
+/**
+ * Delay a Promise
+ */
+export function delay<T>(ms: number): (value: T) => Promise<T> {
+  return (value: T) => DEBUG_EMULATE_RANDOM_LATENCY ? new Promise((resolve) => setTimeout(() => resolve(value), ms)) : Promise.resolve(value);
 }
