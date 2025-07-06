@@ -68,6 +68,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
 
   // 100, 200, 300, 400
   #getOptimalLodForWidth(width: number): Lod {
+    // width = width * 3; // TODO: remove after debugging.
     // Determine the optimal LOD based on the width of the document
     const sizes = documentSizes(this.#documentId);
     for (let lod = 0; lod < sizes.length; lod++) {
@@ -129,7 +130,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
           .then(
             (texture) =>
               new Promise<typeof texture>((resolve) =>
-                setTimeout(() => resolve(texture), 300)
+                setTimeout(() => resolve(texture), Math.random() * 2000) // simulate network delay
               )
           )
           .then((texture) => {
