@@ -16,13 +16,16 @@ export function PixiContainer({
       const app = await createPixiApp(containerRef.current);
       appRef.current = app;
       containerRef.current.appendChild(app.canvas);
-      return () => {
-        if (app.canvas.parentNode) {
-          app.canvas.parentNode.removeChild(app.canvas);
-        }
-        app.destroy(true, { children: true });
-      };
     })();
+
+    return () => {
+      const app = appRef.current;
+      if (!app) return;
+      if (app.canvas.parentNode) {
+        app.canvas.parentNode.removeChild(app.canvas);
+      }
+      app.destroy(true, { children: true });
+    };
   }, [width, height, background]);
 
   return (
