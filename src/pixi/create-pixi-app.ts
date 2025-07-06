@@ -76,8 +76,13 @@ function addDocument(viewport: PIXI.Container, documentId: DocumentId, posX: num
   const sizes = documentSizes(documentId)[lod];
 }
 
+declare global {
+  var __PIXI_APP__: PIXI.Application | undefined;
+}
+
 export async function createPixiApp(container: HTMLDivElement) {
   const app = new PIXI.Application();
+  globalThis.__PIXI_APP__ = app;
   await app.init({
     resizeTo: container,
     backgroundColor: 'lightblue',
