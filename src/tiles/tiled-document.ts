@@ -4,7 +4,7 @@ import {
   createTilesContainer,
   optimalLodForWidthFn,
   type Size,
-} from "./create-tiled-documents";
+} from "./factories";
 import type { OnHandleZoomedEnd } from "./on-handle-zoom-end";
 import {
   documentSizes,

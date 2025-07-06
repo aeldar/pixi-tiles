@@ -1,7 +1,6 @@
 import * as PIXI from "pixi.js";
-import { delay, type DocumentId, type Lod } from "./mock-meta-data";
-import { TiledDocument } from "./tiled-document";
 import { TILE_SIZE } from "./constants";
+import { delay, type Lod } from "./mock-meta-data";
 
 export type Size = [width: number, height: number];
 
@@ -52,26 +51,25 @@ export function createTilesContainer(
   size: Size
 ): PIXI.Container {
   const [containerWidth, containerHeight] = size;
-  
+
   const container = new PIXI.Container();
   container.label = "tiles-container";
 
-  urlMatrix.forEach((row, rowIndex) => {
-    row.forEach((url, colIndex) => {
-      // calculate last row and column corrections for the sprite size.
-      const isLastRow = rowIndex === urlMatrix.length - 1;
-      const isLastCol = colIndex === row.length - 1;
-      const spriteWidth = isLastCol
-        ? containerWidth % TILE_SIZE || TILE_SIZE
-        : TILE_SIZE;
-      const spriteHeight = isLastRow
-        ? containerHeight % TILE_SIZE || TILE_SIZE
-        : TILE_SIZE;
+  const lastRowHeight = containerHeight % TILE_SIZE;
+  const lastColWidth = containerWidth % TILE_SIZE;
+
+  // m - row, n - column
+  urlMatrix.forEach((rowUrls, row) => {
+    rowUrls.forEach((url, col) => {
+      // calculate tile size with correction for the last one in a row or a column
+      const spriteWidth =
+        (col + 1) * TILE_SIZE > containerWidth ? lastColWidth : TILE_SIZE;
+      const spriteHeight =
+        (row + 1) * TILE_SIZE > containerHeight ? lastRowHeight : TILE_SIZE;
 
       const sprite = createEmptySprite(spriteWidth, spriteHeight);
 
-      sprite.setSize(spriteWidth, spriteHeight);
-      sprite.position.set(colIndex * TILE_SIZE, rowIndex * TILE_SIZE);
+      sprite.position.set(col * TILE_SIZE, row * TILE_SIZE);
 
       container.addChild(sprite);
 

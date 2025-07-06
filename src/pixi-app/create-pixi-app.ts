@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { DOCUMENT_IDS, type DocumentId } from "../tiles/mock-meta-data";
 import { createViewport } from "./viewport";
 import { createTiledDocument } from "../tiles/tiled-document";
-import type { Size } from "../tiles/create-tiled-documents";
+import type { Size } from "../tiles/factories";
 
 const INITIAL_DOCUMENT_WIDTH = 200; // px
 const INITIAL_GRID_OFFSET_X = 30; // px
