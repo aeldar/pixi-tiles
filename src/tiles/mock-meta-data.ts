@@ -1,4 +1,4 @@
-import { DEBUG_EMULATE_RANDOM_LATENCY, TILE_SIZE_PX } from './constants';
+import { DEBUG_EMULATE_RANDOM_LATENCY, TILE_SIZE } from './constants';
 
 const IMG_URL_PREFIX = '/assets/_generated/chunks';
 
@@ -36,8 +36,8 @@ export function documentSizes(documentId: DocumentId): Size[] {
 
 // Tiles, m and n, zero based
 function tileDimensionsForSizeAndLod(x: number, y: number, lod: Lod): [number, number] {
-  const m = Math.floor(y / TILE_SIZE_PX);
-  const n = Math.floor(x / TILE_SIZE_PX);
+  const m = Math.floor(y / TILE_SIZE);
+  const n = Math.floor(x / TILE_SIZE);
   return [m, n];
 }
 

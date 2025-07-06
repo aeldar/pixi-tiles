@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Application } from "pixi.js";
-import { createPixiApp } from "./pixi/create-pixi-app";
+import { createPixiApp } from "./pixi-app/create-pixi-app";
 
 declare global {
   var __PIXI_APP__: Application | undefined;

@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import {
   createInvisibleBounds,
   createTilesContainer,
-  getOptimalLodForWidth,
+  optimalLodForWidthFn,
   type Size,
 } from "./create-tiled-documents";
 import type { OnHandleZoomedEnd } from "./on-handle-zoom-end";
@@ -13,7 +13,7 @@ import {
   type Lod,
 } from "./mock-meta-data";
 
-export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
+class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
   readonly label = "tiled-document";
   readonly #documentId: DocumentId;
   // sizes for each LOD
@@ -84,7 +84,7 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
 
   #getOptimalLodForWidth(width: number): Lod {
     // Determine the optimal LOD based on the width of the document
-    return getOptimalLodForWidth(this.#sizes)(width);
+    return optimalLodForWidthFn(this.#sizes)(width);
   }
 
   #getSizeForLod(lod: Lod): Size {
@@ -104,4 +104,9 @@ export class TiledDocument extends PIXI.Container implements OnHandleZoomedEnd {
 
     return createTilesContainer(urlMatrix, [width, height]);
   }
+}
+
+export function createTiledDocument(documentId: DocumentId): TiledDocument {
+  const container = new TiledDocument(documentId);
+  return container;
 }
