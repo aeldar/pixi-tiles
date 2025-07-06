@@ -8,16 +8,15 @@ export function PixiApp({ width = 800, height = 600, background = 0x1099bb }) {
   useEffect(() => {
     (async () => {
       if (!containerRef.current) return;
-      // Use the recommended static create method for Application in PixiJS v8+
       const app = new Application();
-      app.init({ width, height, background });
+      await app.init({ width, height, background });
       appRef.current = app;
       containerRef.current.appendChild(app.canvas);
       return () => {
-        app.destroy(true, { children: true });
         if (app.canvas.parentNode) {
           app.canvas.parentNode.removeChild(app.canvas);
         }
+        app.destroy(true, { children: true });
       };
     })();
   }, [width, height, background]);
