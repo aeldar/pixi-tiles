@@ -1,7 +1,9 @@
 {
-  "name": "pixi-tiles",
+  "name": "@aeldar/pixi-tiles",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
+  "licenseFile": "LICENSE",
   "type": "module",
   "scripts": {
     "dev": "vite",
